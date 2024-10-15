@@ -1,8 +1,8 @@
 # FASTAPI 
 # pip install fastapi uvicorn
+#definimos el modelo
 from typing import Optional, List
 from pydantic import BaseModel, EmailStr
-
 class Persona(BaseModel):
     id: Optional[int] = None
     nombre: str
@@ -13,17 +13,14 @@ class Persona(BaseModel):
 from fastapi import FastAPI, HTTPException
 
 app = FastAPI()
-
 # Base de datos simulada con un array
 persona_db = []
-
 # Crear persona
 @app.post("/personas/", response_model=Persona)
 def crear_persona(persona: Persona):
     persona.id = len(persona_db)
     persona_db.append(persona)
     return persona
-
 # Ver persona por ID
 @app.get("/personas/{persona_id}", response_model=Persona)
 def obtener_persona(persona_id: int):
@@ -35,10 +32,11 @@ def obtener_persona(persona_id: int):
 # Listar personas
 @app.get("/personas/", response_model=List[Persona])
 def listar_personas():
+    
     return persona_db
 
 # Actualizar persona (no implementado)
-@Actualizar
+@app. 
 # Eliminar persona (no implementado)
 
 
