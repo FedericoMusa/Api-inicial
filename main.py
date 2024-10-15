@@ -1,14 +1,14 @@
 # FASTAPI 
 # pip install fastapi uvicorn
 #definimos el modelo
-from typing import Optional, List
+from typing import Optional
 from pydantic import BaseModel, EmailStr
+#modelos
 class Persona(BaseModel):
     id: Optional[int] = None
     nombre: str
     edad: int
     email: EmailStr
-
 # API
 from fastapi import FastAPI, HTTPException
 
@@ -17,7 +17,7 @@ app = FastAPI()
 persona_db = []
 # Crear persona
 @app.post("/personas/", response_model=Persona)
-def crear_persona(persona: Persona):
+def crear_persona(persona: Persona): 
     persona.id = len(persona_db)
     persona_db.append(persona)
     return persona
@@ -28,7 +28,6 @@ def obtener_persona(persona_id: int):
         if persona.id == persona_id:
             return persona
     raise HTTPException(status_code=404, detail="Persona no encontrada")
-
 # Listar personas
 @app.get("/personas/", response_model=List[Persona])
 def listar_personas():
@@ -36,7 +35,21 @@ def listar_personas():
     return persona_db
 
 # Actualizar persona (no implementado)
-@app. 
+@app.put("/personas/{persona_id}", response_model=Persona)
+def actualizar_persona(persona_id: int, persona: Persona):
+    for index, p in enumerate(persona_db):
+        if p.id == persona_id:
+            # Crea una nueva instancia de Persona con los datos actualizados
+            persona_actualizada = Persona(id=persona_id, **persona.dict())
+            persona_db[index] = persona_actualizada
+            return persona_actualizada
+    raise HTTPException(status_code=404, detail="Persona no encontrada")
 # Eliminar persona (no implementado)
-
+@app.delete("/personas/{persona_id}")
+def eliminar_persona(persona_id: int):
+    for index, p in enumerate(persona_db):
+        if p.id == persona_id:
+            del persona_db[index]
+            return {"detail": "Persona eliminada"} 
+    raise HTTPException(status_code=404, detail="Persona no encontrada")
 
